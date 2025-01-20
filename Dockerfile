@@ -42,8 +42,11 @@ RUN --mount=type=bind,target=. \
   --mount=type=cache,target=/go/pkg \
   make build
 
+# Create empty directory for scratch
+RUN touch /emptydir
+
 # ----------- stage: final
-FROM scratch
+FROM --platform=$BUILDPLATFORM alpine:latest
 
 ARG VERSION
 ARG BUILD_TIME
@@ -59,9 +62,7 @@ LABEL org.opencontainers.image.title="blocky" \
   org.opencontainers.image.source="https://github.com/0xERR0R/blocky" \
   org.opencontainers.image.documentation="https://0xerr0r.github.io/blocky/${DOC_PATH}/"
 
-
-
-USER 100
+#USER 100
 WORKDIR /app
 
 COPY --link --from=ca-certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
